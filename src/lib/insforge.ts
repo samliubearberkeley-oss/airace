@@ -49,6 +49,11 @@ export const AI_MODELS = [
   },
 ] as const;
 
-export type AIModel = (typeof AI_MODELS)[number] & {
+export type AIModel = {
+  id: string;
+  name: string;
+  emoji: string;
   logo?: string;
+  color: string;
+  description: string;
 };
