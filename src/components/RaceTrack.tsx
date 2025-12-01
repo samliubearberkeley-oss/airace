@@ -3,6 +3,7 @@ import { MazeCanvas } from './MazeCanvas';
 import type { Maze } from '../lib/maze';
 import type { RacerState } from '../lib/aiRacer';
 import { formatTime } from '../lib/aiRacer';
+import { ModelIcon } from './ModelIcon';
 
 type Props = {
   maze: Maze;
@@ -73,45 +74,55 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
             <div key={racer.model.id} className="space-y-3">
               {/* Header */}
               <div
-                className="flex items-center justify-between p-3 rounded-lg"
-                style={{ backgroundColor: racer.model.color + '20' }}
+                className="flex items-center justify-between p-3 border-3"
+                style={{ 
+                  backgroundColor: racer.model.color + '30',
+                  borderColor: racer.model.color,
+                  borderWidth: '3px',
+                  boxShadow: '0 3px 0 var(--nes-black)',
+                  imageRendering: 'pixelated',
+                }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{racer.model.emoji}</span>
-                  <span className="font-semibold text-white text-sm">
-                    {racer.model.name}
+                  <ModelIcon model={racer.model} size="md" />
+                  <span className="pixel-text text-nes-white text-xs md:text-sm">
+                    {racer.model.name.toUpperCase()}
                   </span>
                 </div>
 
                 {/* Status badge */}
                 <div className="flex items-center gap-2">
                   {isFinished && rank >= 0 && (
-                    <span className="text-lg">
+                    <span className="text-base md:text-lg" style={{ imageRendering: 'pixelated' }}>
                       {rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `#${rank + 1}`}
                     </span>
                   )}
                   <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      isReady
-                        ? 'bg-yellow-500/30 text-yellow-300'
+                    className="text-[10px] md:text-xs px-2 py-1 pixel-text border-2 border-nes-white"
+                    style={{
+                      backgroundColor: isReady
+                        ? 'var(--nes-yellow)'
                         : isRacing
-                          ? 'bg-blue-500/30 text-blue-300 animate-pulse'
+                          ? 'var(--nes-blue)'
                           : isFinished
-                            ? 'bg-green-500/30 text-green-300'
+                            ? 'var(--nes-green)'
                             : hasError
-                              ? 'bg-red-500/30 text-red-300'
-                              : 'bg-gray-500/30 text-gray-300'
-                    }`}
+                              ? 'var(--nes-red)'
+                              : 'var(--nes-gray)',
+                      color: 'var(--nes-white)',
+                      boxShadow: '2px 2px 0 var(--nes-black)',
+                      imageRendering: 'pixelated',
+                    }}
                   >
                     {isReady
-                      ? '🏁 Ready'
+                      ? '🏁 READY'
                       : isRacing
-                        ? '🏃 Running!'
+                        ? '🏃 RUNNING!'
                         : isFinished
-                          ? '✅ Finished'
+                          ? '✅ FINISHED'
                           : hasError
-                            ? '❌ Error'
-                            : '⏳ Idle'}
+                            ? '❌ ERROR'
+                            : '⏳ IDLE'}
                   </span>
                 </div>
               </div>
@@ -120,41 +131,47 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
               <div className="text-center space-y-1">
                 {/* Think time = Speed */}
                 {racer.thinkTime > 0 && (
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-gray-400 text-xs">Think:</span>
-                    <span className="text-cyan-400 font-mono text-sm">
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    <span className="text-nes-light-gray text-xs pixel-text">THINK:</span>
+                    <span className="text-nes-cyan font-pixel text-sm">
                       {formatTime(racer.thinkTime)}
                     </span>
                     <span 
-                      className={`text-xs px-2 py-0.5 rounded ${
-                        speedPercent >= 100 
-                          ? 'bg-green-500/30 text-green-300' 
+                      className="text-[10px] px-2 py-0.5 pixel-text border-2 border-nes-white"
+                      style={{
+                        backgroundColor: speedPercent >= 100 
+                          ? 'var(--nes-green)' 
                           : speedPercent >= 80 
-                            ? 'bg-yellow-500/30 text-yellow-300'
-                            : 'bg-red-500/30 text-red-300'
-                      }`}
+                            ? 'var(--nes-yellow)'
+                            : 'var(--nes-red)',
+                        color: 'var(--nes-white)',
+                        boxShadow: '1px 1px 0 var(--nes-black)',
+                        imageRendering: 'pixelated',
+                      }}
                     >
-                      {speedPercent >= 100 ? '🚀 Fastest' : `${speedPercent}% speed`}
+                      {speedPercent >= 100 ? '🚀 FASTEST' : `${speedPercent}% SPEED`}
                     </span>
                   </div>
                 )}
                 
                 {/* Race timer */}
                 <div 
-                  className={`font-mono text-2xl font-bold ${
-                    isFinished 
-                      ? 'text-green-400' 
+                  className="font-pixel text-xl md:text-2xl pixel-text"
+                  style={{
+                    color: isFinished 
+                      ? 'var(--nes-green)' 
                       : isRacing 
-                        ? 'text-cyan-400' 
-                        : 'text-gray-400'
-                  }`}
+                        ? 'var(--nes-cyan)' 
+                        : 'var(--nes-light-gray)',
+                    textShadow: '2px 2px 0 var(--nes-black)',
+                  }}
                 >
                   ⏱️ {isReady ? '--' : formatTime(elapsedTime)}
                 </div>
-                <div className="text-sm text-gray-400">
-                  {isReady && `${racer.plannedPath.length - 1} steps to go`}
-                  {isRacing && `Move ${racer.moveCount}/${racer.plannedPath.length - 1}`}
-                  {isFinished && `${racer.moveCount} moves`}
+                <div className="text-xs text-nes-light-gray pixel-text">
+                  {isReady && `${racer.plannedPath.length - 1} STEPS TO GO`}
+                  {isRacing && `MOVE ${racer.moveCount}/${racer.plannedPath.length - 1}`}
+                  {isFinished && `${racer.moveCount} MOVES`}
                 </div>
               </div>
 
@@ -172,8 +189,8 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
 
               {/* Error message */}
               {hasError && racer.error && (
-                <p className="text-red-400 text-xs text-center bg-red-500/10 rounded-lg p-2">
-                  {racer.error}
+                <p className="text-nes-red text-xs text-center pixel-text border-2 border-nes-red p-2" style={{ backgroundColor: 'var(--nes-red)' + '20', boxShadow: '2px 2px 0 rgba(0, 0, 0, 0.3)' }}>
+                  ❌ {racer.error.toUpperCase()}
                 </p>
               )}
             </div>

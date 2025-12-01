@@ -34,12 +34,15 @@ export function MazeCanvas({
     canvas.width = width;
     canvas.height = height;
 
+    // Pixel art rendering - disable smoothing
+    ctx.imageSmoothingEnabled = false;
+
     // Clear canvas
-    ctx.fillStyle = '#0f0f0f';
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
 
     // Draw grid background
-    ctx.strokeStyle = '#1a1a2e';
+    ctx.strokeStyle = '#212121';
     ctx.lineWidth = 1;
     for (let y = 0; y < maze.height; y++) {
       for (let x = 0; x < maze.width; x++) {
@@ -49,10 +52,10 @@ export function MazeCanvas({
 
     // Draw path if enabled
     if (showPath && path.length > 1) {
-      ctx.strokeStyle = model.color + '40';
-      ctx.lineWidth = cellSize * 0.3;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.strokeStyle = model.color + '60';
+      ctx.lineWidth = Math.max(2, cellSize * 0.25);
+      ctx.lineCap = 'square';
+      ctx.lineJoin = 'miter';
       ctx.beginPath();
       ctx.moveTo(
         path[0].x * cellSize + cellSize / 2,
@@ -68,7 +71,7 @@ export function MazeCanvas({
     }
 
     // Draw walls
-    ctx.strokeStyle = '#e0e0e0';
+    ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
 
     for (let y = 0; y < maze.height; y++) {
@@ -104,76 +107,67 @@ export function MazeCanvas({
       }
     }
 
-    // Draw start marker
-    const startX = maze.start.x * cellSize + cellSize / 2;
-    const startY = maze.start.y * cellSize + cellSize / 2;
-    ctx.fillStyle = '#22c55e';
-    ctx.beginPath();
-    ctx.arc(startX, startY, cellSize * 0.25, 0, Math.PI * 2);
-    ctx.fill();
+    // Draw start marker (pixelated square)
+    const startX = maze.start.x * cellSize;
+    const startY = maze.start.y * cellSize;
+    ctx.fillStyle = '#4caf50';
+    ctx.fillRect(startX + 2, startY + 2, cellSize - 4, cellSize - 4);
     ctx.fillStyle = '#ffffff';
-    ctx.font = `bold ${cellSize * 0.3}px sans-serif`;
+    ctx.font = `bold ${cellSize * 0.4}px 'Press Start 2P'`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('S', startX, startY);
+    ctx.fillText('S', startX + cellSize / 2, startY + cellSize / 2);
 
-    // Draw end marker
-    const endX = maze.end.x * cellSize + cellSize / 2;
-    const endY = maze.end.y * cellSize + cellSize / 2;
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath();
-    ctx.arc(endX, endY, cellSize * 0.25, 0, Math.PI * 2);
-    ctx.fill();
+    // Draw end marker (pixelated square)
+    const endX = maze.end.x * cellSize;
+    const endY = maze.end.y * cellSize;
+    ctx.fillStyle = '#e91e63';
+    ctx.fillRect(endX + 2, endY + 2, cellSize - 4, cellSize - 4);
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('E', endX, endY);
+    ctx.fillText('E', endX + cellSize / 2, endY + cellSize / 2);
 
-    // Draw ball
+    // Draw ball (pixelated square)
     const ballX = ballPosition.x * cellSize + cellSize / 2;
     const ballY = ballPosition.y * cellSize + cellSize / 2;
+    const ballSize = Math.floor(cellSize * 0.4);
 
-    // Glow effect
-    const gradient = ctx.createRadialGradient(
-      ballX,
-      ballY,
-      0,
-      ballX,
-      ballY,
-      cellSize * 0.5
+    // Ball shadow
+    ctx.fillStyle = '#00000080';
+    ctx.fillRect(
+      Math.floor(ballX - ballSize / 2) + 2,
+      Math.floor(ballY - ballSize / 2) + 2,
+      ballSize,
+      ballSize
     );
-    gradient.addColorStop(0, model.color);
-    gradient.addColorStop(0.5, model.color + '80');
-    gradient.addColorStop(1, 'transparent');
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, cellSize * 0.5, 0, Math.PI * 2);
-    ctx.fill();
 
-    // Ball core
+    // Ball core (pixelated)
     ctx.fillStyle = model.color;
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, cellSize * 0.35, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillRect(
+      Math.floor(ballX - ballSize / 2),
+      Math.floor(ballY - ballSize / 2),
+      ballSize,
+      ballSize
+    );
 
     // Ball highlight
-    ctx.fillStyle = '#ffffff40';
-    ctx.beginPath();
-    ctx.arc(
-      ballX - cellSize * 0.1,
-      ballY - cellSize * 0.1,
-      cellSize * 0.12,
-      0,
-      Math.PI * 2
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(
+      Math.floor(ballX - ballSize / 2) + 2,
+      Math.floor(ballY - ballSize / 2) + 2,
+      Math.floor(ballSize / 3),
+      Math.floor(ballSize / 3)
     );
-    ctx.fill();
   }, [maze, ballPosition, path, model, cellSize, showPath]);
 
   return (
     <canvas
       ref={canvasRef}
-      className="rounded-lg shadow-lg"
+      className="border-3"
       style={{
-        boxShadow: `0 0 20px ${model.color}30`,
-        border: `2px solid ${model.color}50`,
+        borderColor: model.color,
+        borderWidth: '3px',
+        boxShadow: `0 4px 0 var(--nes-black), 0 0 10px ${model.color}40`,
+        imageRendering: 'pixelated',
       }}
     />
   );

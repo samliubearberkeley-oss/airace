@@ -11,6 +11,7 @@ export const AI_MODELS = [
     id: 'x-ai/grok-4',
     name: 'Grok 4',
     emoji: '🚀',
+    logo: '/logos/grok.png',
     color: '#FF6B35',
     description: 'Latest model from xAI',
   },
@@ -18,6 +19,7 @@ export const AI_MODELS = [
     id: 'google/gemini-2.5-pro',
     name: 'Gemini 2.5 Pro',
     emoji: '🌟',
+    logo: '/logos/gemini.png',
     color: '#4285F4',
     description: 'Google flagship model',
   },
@@ -25,6 +27,7 @@ export const AI_MODELS = [
     id: 'anthropic/claude-sonnet-4.5',
     name: 'Claude Sonnet 4.5',
     emoji: '🎭',
+    logo: '/logos/claude.png',
     color: '#D97706',
     description: 'Anthropic intelligent assistant',
   },
@@ -32,6 +35,7 @@ export const AI_MODELS = [
     id: 'openai/gpt-5',
     name: 'GPT-5',
     emoji: '🧠',
+    logo: '/logos/openai.png',
     color: '#10A37F',
     description: 'OpenAI most powerful model',
   },
@@ -39,9 +43,12 @@ export const AI_MODELS = [
     id: 'openai/gpt-4o',
     name: 'GPT-4o',
     emoji: '💡',
+    logo: '/logos/openai.png',
     color: '#AB68FF',
     description: 'OpenAI multimodal model',
   },
 ] as const;
 
-export type AIModel = (typeof AI_MODELS)[number];
+export type AIModel = (typeof AI_MODELS)[number] & {
+  logo?: string;
+};

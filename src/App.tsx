@@ -2,13 +2,12 @@ import { useState, useCallback, useRef } from 'react';
 import { AISelector } from './components/AISelector';
 import { MazeSettings } from './components/MazeSettings';
 import { RaceTrack } from './components/RaceTrack';
-import { AITestPanel } from './components/AITestPanel';
 import { Podium } from './components/Podium';
 import { generateMaze, type Maze } from './lib/maze';
 import { type AIModel } from './lib/insforge';
 import { planPath, animateRacer, type RacerState } from './lib/aiRacer';
 
-type GameState = 'setup' | 'ready' | 'racing' | 'finished' | 'test';
+type GameState = 'setup' | 'ready' | 'racing' | 'finished';
 
 function App() {
   // Game state
@@ -149,33 +148,40 @@ function App() {
   const isRacing = gameState === 'racing';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Animated background */}
+    <div className="min-h-screen game-bg relative">
+      {/* Retro game background pattern */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px]" />
+        {/* Colorful retro shapes */}
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-nes-cyan opacity-20" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-nes-purple opacity-20" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-nes-blue opacity-10" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }} />
       </div>
 
-      {/* Grid pattern overlay */}
+      {/* Scanline overlay for CRT effect */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-[0.03]"
+        className="fixed inset-0 pointer-events-none opacity-30"
         style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
+          background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
         }}
       />
 
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-12">
-          <h1 className="text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent mb-4">
-            🧩 AI Maze Race
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="relative">
+              <img 
+                src="/logo.svg" 
+                alt="AI Maze Race Logo" 
+                className="w-14 h-14 md:w-18 md:h-18 drop-shadow-lg"
+                style={{ filter: 'drop-shadow(0 0 8px rgba(135, 206, 235, 0.5))' }}
+              />
+            </div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl pixel-text-gradient">
+              AI Maze Race
+            </h1>
+          </div>
+          <p className="text-[#333333] text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-normal">
             Select multiple AI models and watch them compete in the same maze. Who will find the exit first?
           </p>
         </header>
@@ -185,7 +191,7 @@ function App() {
           {(gameState === 'setup' || gameState === 'ready') && (
             <div className="space-y-8">
               {/* AI Selector */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+              <div className="pixel-panel p-6">
                 <AISelector
                   selectedModels={selectedModels}
                   onToggle={handleToggleModel}
@@ -194,7 +200,7 @@ function App() {
               </div>
 
               {/* Maze Settings */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+              <div className="pixel-panel p-6">
                 <MazeSettings
                   width={mazeWidth}
                   height={mazeHeight}
@@ -209,41 +215,21 @@ function App() {
                 <button
                   onClick={handleGenerateMaze}
                   disabled={isRacing}
-                  className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="pixel-button"
+                  style={{ background: isRacing ? 'var(--nes-gray)' : 'var(--nes-cyan)' }}
                 >
-                  🎲 {maze ? 'Regenerate Maze' : 'Generate Maze'}
+                  {maze ? 'Regenerate' : 'Generate'} Maze
                 </button>
 
                 {canStartRace && gameState === 'ready' && (
                   <button
                     onClick={handleStartRace}
-                    className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/25 transition-all duration-300 hover:scale-105 hover:shadow-green-500/40"
+                    className="pixel-button"
+                    style={{ background: 'var(--nes-green)' }}
                   >
-                    🏁 Start Race!
+                    Start Race
                   </button>
                 )}
-
-                <button
-                  onClick={() => setGameState('test')}
-                  className="px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-purple-500/25 transition-all duration-300 hover:scale-105"
-                >
-                  🔌 Test AI APIs
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Test Panel */}
-          {gameState === 'test' && (
-            <div className="space-y-6">
-              <AITestPanel />
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setGameState('setup')}
-                  className="px-6 py-3 bg-slate-600 hover:bg-slate-500 text-white font-bold rounded-xl transition-all duration-300 hover:scale-105"
-                >
-                  ← Back to Setup
-                </button>
               </div>
             </div>
           )}
@@ -252,7 +238,7 @@ function App() {
           {(gameState === 'racing' || gameState === 'finished') && maze && (
             <div className="space-y-6">
               {/* Race Track */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+              <div className="pixel-panel p-6">
                 <RaceTrack
                   maze={maze}
                   racers={racers}
@@ -265,9 +251,10 @@ function App() {
                 {gameState === 'racing' && (
                   <button
                     onClick={handleStopRace}
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/25 transition-all duration-300 hover:scale-105"
+                    className="pixel-button"
+                    style={{ background: 'var(--nes-red)' }}
                   >
-                    ⏹️ Stop Race
+                    ⏹️ STOP RACE
                   </button>
                 )}
 
@@ -275,15 +262,17 @@ function App() {
                   <>
                     <button
                       onClick={handleRerun}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-105"
+                      className="pixel-button"
+                      style={{ background: 'var(--nes-blue)' }}
                     >
-                      🔄 Race Again
+                      🔄 RACE AGAIN
                     </button>
                     <button
                       onClick={handleReset}
-                      className="px-6 py-3 bg-slate-600 hover:bg-slate-500 text-white font-bold rounded-xl transition-all duration-300 hover:scale-105"
+                      className="pixel-button"
+                      style={{ background: 'var(--nes-gray)' }}
                     >
-                      🏠 Back to Setup
+                      🏠 BACK TO SETUP
                     </button>
                   </>
                 )}
@@ -298,9 +287,9 @@ function App() {
 
           {/* Preview maze before race */}
           {gameState === 'ready' && maze && racers.length === 0 && (
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-              <h3 className="text-lg font-semibold text-white mb-4 text-center">
-                📍 Maze Preview
+            <div className="pixel-panel p-6">
+              <h3 className="text-sm md:text-base pixel-text text-nes-white mb-4 text-center">
+                📍 MAZE PREVIEW
               </h3>
               <div className="flex justify-center">
                 <canvas
@@ -316,12 +305,15 @@ function App() {
                     canvas.width = width;
                     canvas.height = height;
 
+                    // Pixel art rendering
+                    ctx.imageSmoothingEnabled = false;
+
                     // Background
-                    ctx.fillStyle = '#0f0f0f';
+                    ctx.fillStyle = '#000000';
                     ctx.fillRect(0, 0, width, height);
 
                     // Grid
-                    ctx.strokeStyle = '#1a1a2e';
+                    ctx.strokeStyle = '#212121';
                     ctx.lineWidth = 1;
                     for (let y = 0; y < maze.height; y++) {
                       for (let x = 0; x < maze.width; x++) {
@@ -335,7 +327,7 @@ function App() {
                     }
 
                     // Walls
-                    ctx.strokeStyle = '#e0e0e0';
+                    ctx.strokeStyle = '#ffffff';
                     ctx.lineWidth = 2;
                     for (let y = 0; y < maze.height; y++) {
                       for (let x = 0; x < maze.width; x++) {
@@ -371,18 +363,15 @@ function App() {
                     }
 
                     // Start
-                    ctx.fillStyle = '#22c55e';
-                    ctx.beginPath();
-                    ctx.arc(
-                      maze.start.x * cellSize + cellSize / 2,
-                      maze.start.y * cellSize + cellSize / 2,
-                      cellSize * 0.3,
-                      0,
-                      Math.PI * 2
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fillRect(
+                      maze.start.x * cellSize + 2,
+                      maze.start.y * cellSize + 2,
+                      cellSize - 4,
+                      cellSize - 4
                     );
-                    ctx.fill();
-                    ctx.fillStyle = '#fff';
-                    ctx.font = `bold ${cellSize * 0.35}px sans-serif`;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = `bold ${cellSize * 0.4}px 'Press Start 2P'`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(
@@ -392,24 +381,22 @@ function App() {
                     );
 
                     // End
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath();
-                    ctx.arc(
-                      maze.end.x * cellSize + cellSize / 2,
-                      maze.end.y * cellSize + cellSize / 2,
-                      cellSize * 0.3,
-                      0,
-                      Math.PI * 2
+                    ctx.fillStyle = '#e91e63';
+                    ctx.fillRect(
+                      maze.end.x * cellSize + 2,
+                      maze.end.y * cellSize + 2,
+                      cellSize - 4,
+                      cellSize - 4
                     );
-                    ctx.fill();
-                    ctx.fillStyle = '#fff';
+                    ctx.fillStyle = '#ffffff';
                     ctx.fillText(
                       'E',
                       maze.end.x * cellSize + cellSize / 2,
                       maze.end.y * cellSize + cellSize / 2
                     );
                   }}
-                  className="rounded-lg shadow-lg border-2 border-slate-600"
+                  className="border-3 border-nes-white"
+                  style={{ borderWidth: '3px', imageRendering: 'pixelated' }}
                 />
               </div>
             </div>
@@ -417,13 +404,19 @@ function App() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-gray-500 text-sm">
+        <footer className="mt-16 text-center text-[#666666] text-sm font-normal">
           <p>
             Powered by{' '}
-            <span className="text-cyan-400 font-semibold">InsForge</span> AI
-            Gateway
+            <a 
+              href="https://insforge.dev/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#000000] font-semibold hover:underline"
+            >
+              InsForge
+            </a>
           </p>
-          <p className="mt-1 text-xs">
+          <p className="mt-2 text-xs text-[#666666]">
             Grok 4 • Gemini 2.5 Pro • Claude Sonnet 4.5 • GPT-5 • GPT-4o
           </p>
         </footer>

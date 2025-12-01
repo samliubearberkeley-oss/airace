@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { insforge, AI_MODELS, type AIModel } from '../lib/insforge';
+import { ModelIcon } from './ModelIcon';
 
 type TestResult = {
   model: AIModel;
@@ -92,27 +93,28 @@ export function AITestPanel() {
   const errorCount = results.filter((r) => r.status === 'error').length;
 
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">🔌 AI Connection Test</h3>
+    <div className="pixel-panel p-6">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h3 className="text-sm md:text-base pixel-text text-nes-white">🔌 AI CONNECTION TEST</h3>
         <button
           onClick={testAllAIs}
           disabled={testing}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            testing
-              ? 'bg-gray-600 cursor-not-allowed'
-              : 'bg-cyan-500 hover:bg-cyan-600'
-          } text-white`}
+          className="pixel-button"
+          style={{ 
+            background: testing ? 'var(--nes-gray)' : 'var(--nes-cyan)',
+            fontSize: '12px',
+            padding: '8px 16px',
+          }}
         >
-          {testing ? '⏳ Testing...' : '🧪 Test All AIs'}
+          {testing ? '⏳ TESTING...' : '🧪 TEST ALL AIS'}
         </button>
       </div>
 
       {/* Summary */}
       {(successCount > 0 || errorCount > 0) && (
-        <div className="mb-4 flex gap-4 text-sm">
-          <span className="text-green-400">✅ {successCount} Success</span>
-          <span className="text-red-400">❌ {errorCount} Failed</span>
+        <div className="mb-4 flex gap-4 text-xs pixel-text flex-wrap">
+          <span className="text-nes-green">✅ {successCount} SUCCESS</span>
+          <span className="text-nes-red">❌ {errorCount} FAILED</span>
         </div>
       )}
 
@@ -121,50 +123,53 @@ export function AITestPanel() {
         {results.map((result, index) => (
           <div
             key={result.model.id}
-            className="flex items-center justify-between p-3 rounded-lg border"
+            className="flex items-center justify-between p-3 border-3 flex-wrap gap-2"
             style={{
-              borderColor: result.model.color + '50',
+              borderColor: result.model.color + '80',
+              borderWidth: '3px',
               backgroundColor:
                 result.status === 'success'
-                  ? 'rgba(34, 197, 94, 0.1)'
+                  ? 'var(--nes-green)' + '20'
                   : result.status === 'error'
-                    ? 'rgba(239, 68, 68, 0.1)'
+                    ? 'var(--nes-red)' + '20'
                     : result.status === 'testing'
-                      ? 'rgba(59, 130, 246, 0.1)'
-                      : 'transparent',
+                      ? 'var(--nes-blue)' + '20'
+                      : 'var(--nes-dark-gray)',
+              boxShadow: '0 2px 0 var(--nes-black)',
+              imageRendering: 'pixelated',
             }}
           >
             {/* Model info */}
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{result.model.emoji}</span>
+              <ModelIcon model={result.model} size="lg" />
               <div>
-                <div className="font-medium text-white">{result.model.name}</div>
-                <div className="text-xs text-gray-400">{result.model.id}</div>
+                <div className="pixel-text text-nes-white text-xs md:text-sm font-medium">{result.model.name.toUpperCase()}</div>
+                <div className="text-[10px] text-nes-light-gray pixel-text">{result.model.id}</div>
               </div>
             </div>
 
             {/* Status */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {result.time && (
-                <span className="text-sm text-gray-400">{result.time}ms</span>
+                <span className="text-xs text-nes-light-gray font-pixel">{result.time}MS</span>
               )}
 
               {result.status === 'pending' && (
-                <span className="text-gray-400 text-sm">⏸️ Pending</span>
+                <span className="text-nes-light-gray text-xs pixel-text">⏸️ PENDING</span>
               )}
 
               {result.status === 'testing' && (
-                <span className="text-blue-400 text-sm animate-pulse">
-                  🔄 Testing...
+                <span className="text-nes-blue text-xs pixel-text animate-pixel-glow">
+                  🔄 TESTING...
                 </span>
               )}
 
               {result.status === 'success' && (
                 <div className="text-right">
-                  <span className="text-green-400 text-sm">✅ Connected</span>
+                  <span className="text-nes-green text-xs pixel-text">✅ CONNECTED</span>
                   {result.response && (
-                    <div className="text-xs text-gray-400 mt-1">
-                      Response: "{result.response}"
+                    <div className="text-[10px] text-nes-light-gray pixel-text mt-1">
+                      RESPONSE: "{result.response.toUpperCase()}"
                     </div>
                   )}
                 </div>
@@ -172,10 +177,10 @@ export function AITestPanel() {
 
               {result.status === 'error' && (
                 <div className="text-right max-w-[200px]">
-                  <span className="text-red-400 text-sm">❌ Error</span>
+                  <span className="text-nes-red text-xs pixel-text">❌ ERROR</span>
                   {result.error && (
-                    <div className="text-xs text-red-300 mt-1 truncate">
-                      {result.error}
+                    <div className="text-[10px] text-nes-red pixel-text mt-1 truncate">
+                      {result.error.toUpperCase()}
                     </div>
                   )}
                 </div>
@@ -185,7 +190,12 @@ export function AITestPanel() {
               {(result.status === 'success' || result.status === 'error') && (
                 <button
                   onClick={() => testSingleAI(result.model, index)}
-                  className="text-xs px-2 py-1 bg-slate-600 hover:bg-slate-500 rounded text-white"
+                  className="pixel-button"
+                  style={{ 
+                    background: 'var(--nes-gray)',
+                    fontSize: '10px',
+                    padding: '4px 8px',
+                  }}
                 >
                   🔄
                 </button>

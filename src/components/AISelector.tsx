@@ -1,4 +1,5 @@
 import { AI_MODELS, type AIModel } from '../lib/insforge';
+import { ModelIcon } from './ModelIcon';
 
 type Props = {
   selectedModels: AIModel[];
@@ -19,9 +20,9 @@ export function AISelector({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Select AI Racers</h3>
-        <span className="text-sm text-gray-400">
-          Selected {selectedModels.length}/{maxSelection}
+        <h3 className="text-sm md:text-base text-[#000000] font-semibold">Select AI Racers</h3>
+        <span className="text-xs md:text-sm text-[#666666] font-normal">
+          {selectedModels.length}/{maxSelection} selected
         </span>
       </div>
 
@@ -36,25 +37,30 @@ export function AISelector({
               onClick={() => canSelect && onToggle(model)}
               disabled={disabled || (!selected && !canSelect)}
               className={`
-                relative p-4 rounded-xl border-2 transition-all duration-300
-                ${
-                  selected
-                    ? 'border-opacity-100 bg-opacity-20 scale-[1.02]'
-                    : 'border-opacity-30 hover:border-opacity-60 bg-opacity-5'
-                }
+                relative p-4 border-3 transition-none
+                ${selected ? 'scale-[1.05]' : ''}
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 ${!canSelect && !selected ? 'opacity-30' : ''}
               `}
               style={{
-                borderColor: model.color,
-                backgroundColor: selected ? model.color + '20' : 'transparent',
+                borderColor: '#000000',
+                borderWidth: '2px',
+                backgroundColor: selected ? model.color + '30' : 'var(--nes-dark-gray)',
+                boxShadow: selected 
+                  ? `0 2px 4px rgba(0, 0, 0, 0.1), inset 0 0 10px ${model.color}20`
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                imageRendering: 'pixelated',
               }}
             >
               {/* Selection indicator */}
               {selected && (
                 <div
-                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                  style={{ backgroundColor: model.color }}
+                  className="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center text-white text-xs pixel-text border-2"
+                  style={{ 
+                    backgroundColor: model.color,
+                    borderColor: '#000000',
+                    boxShadow: '2px 2px 0 rgba(0, 0, 0, 0.2)',
+                  }}
                 >
                   ✓
                 </div>
@@ -62,32 +68,22 @@ export function AISelector({
 
               {/* Model info */}
               <div className="flex flex-col items-center gap-2">
-                <span className="text-3xl">{model.emoji}</span>
-                <span className="font-semibold text-white text-sm">
+                <ModelIcon model={model} size="lg" />
+                <span className="text-[#000000] text-xs md:text-sm font-semibold">
                   {model.name}
                 </span>
-                <span className="text-xs text-gray-400 text-center">
+                <span className="text-xs md:text-sm text-[#666666] text-center leading-tight font-normal">
                   {model.description}
                 </span>
               </div>
-
-              {/* Glow effect when selected */}
-              {selected && (
-                <div
-                  className="absolute inset-0 rounded-xl pointer-events-none"
-                  style={{
-                    boxShadow: `0 0 20px ${model.color}40, inset 0 0 20px ${model.color}10`,
-                  }}
-                />
-              )}
             </button>
           );
         })}
       </div>
 
       {selectedModels.length < 2 && (
-        <p className="text-amber-400 text-sm text-center">
-          ⚠️ Please select at least 2 AI models for the race
+        <p className="text-nes-yellow text-xs md:text-sm text-center font-normal">
+          ⚠️ Select at least 2 AI models for the race
         </p>
       )}
     </div>

@@ -1,5 +1,6 @@
 import type { RacerState } from '../lib/aiRacer';
 import { formatTime } from '../lib/aiRacer';
+import { ModelIcon } from './ModelIcon';
 
 type Props = {
   racers: RacerState[];
@@ -25,13 +26,13 @@ export function Podium({ racers, finishOrder }: Props) {
   };
 
   return (
-    <div className="bg-gradient-to-b from-slate-800/80 to-slate-900/80 rounded-2xl p-8 border border-amber-500/30 shadow-2xl">
+    <div className="pixel-panel p-6 md:p-8" style={{ borderColor: 'var(--nes-yellow)' }}>
       {/* Title */}
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400">
-          🏆 Race Results 🏆
+        <h2 className="text-xl md:text-2xl lg:text-3xl pixel-text-gradient mb-4 animate-pixel-glow">
+          🏆 RACE RESULTS 🏆
         </h2>
-        <p className="text-gray-400 mt-2">AI Maze Race Championship</p>
+        <p className="text-nes-light-gray mt-2 text-xs md:text-sm pixel-text">AI MAZE RACE CHAMPIONSHIP</p>
       </div>
 
       {/* Podium */}
@@ -40,72 +41,93 @@ export function Podium({ racers, finishOrder }: Props) {
         <div className="flex flex-col items-center">
           {second && (
             <div
-              className="mb-2 p-4 rounded-xl text-center transition-all hover:scale-105"
-              style={{ backgroundColor: second.model.color + '30' }}
+              className="mb-2 p-4 text-center border-3"
+              style={{ 
+                backgroundColor: second.model.color + '40',
+                borderColor: second.model.color,
+                borderWidth: '3px',
+                boxShadow: '0 4px 0 var(--nes-black)',
+                imageRendering: 'pixelated',
+              }}
             >
-              <div className="text-4xl mb-2">{second.model.emoji}</div>
-              <div className="text-white font-bold text-sm">{second.model.name}</div>
-              <div className="text-gray-300 text-xs mt-1">
+              <div className="mb-2">
+                <ModelIcon model={second.model} size="xl" />
+              </div>
+              <div className="text-nes-white pixel-text text-xs md:text-sm font-bold">{second.model.name.toUpperCase()}</div>
+              <div className="text-nes-light-gray font-pixel text-xs mt-1">
                 {formatTime(getTotalTime(second))}
               </div>
-              <div className="text-gray-400 text-xs">{second.moveCount} moves</div>
+              <div className="text-nes-light-gray text-[10px] pixel-text">{second.moveCount} MOVES</div>
             </div>
           )}
-          <div className="w-24 h-20 bg-gradient-to-t from-gray-400 to-gray-300 rounded-t-lg flex items-center justify-center shadow-lg">
-            <span className="text-4xl">🥈</span>
+          <div className="w-20 md:w-24 h-16 md:h-20 flex items-center justify-center border-3" style={{ backgroundColor: 'var(--nes-gray)', borderColor: 'var(--nes-white)', borderWidth: '3px', boxShadow: '0 4px 0 var(--nes-black)', imageRendering: 'pixelated' }}>
+            <span className="text-3xl md:text-4xl" style={{ imageRendering: 'pixelated' }}>🥈</span>
           </div>
-          <div className="text-gray-300 font-bold mt-1">2nd</div>
+          <div className="text-nes-light-gray pixel-text text-xs md:text-sm font-bold mt-1">2ND</div>
         </div>
 
         {/* 1st Place */}
-        <div className="flex flex-col items-center -mt-8">
+        <div className="flex flex-col items-center -mt-6 md:-mt-8">
           {first && (
             <div
-              className="mb-2 p-5 rounded-xl text-center transition-all hover:scale-105 ring-2 ring-amber-400/50"
+              className="mb-2 p-4 md:p-5 text-center border-3 animate-pixel-bounce"
               style={{ 
-                backgroundColor: first.model.color + '40',
-                boxShadow: `0 0 30px ${first.model.color}40`
+                backgroundColor: first.model.color + '50',
+                borderColor: 'var(--nes-yellow)',
+                borderWidth: '4px',
+                boxShadow: `0 6px 0 var(--nes-black), 0 0 20px ${first.model.color}60`,
+                imageRendering: 'pixelated',
               }}
             >
-              <div className="text-5xl mb-2 animate-bounce">{first.model.emoji}</div>
-              <div className="text-white font-bold">{first.model.name}</div>
-              <div className="text-amber-300 font-mono font-bold text-lg mt-1">
+              <div className="mb-2">
+                <ModelIcon model={first.model} size="xl" />
+              </div>
+              <div className="text-nes-white pixel-text text-xs md:text-sm font-bold">{first.model.name.toUpperCase()}</div>
+              <div className="text-nes-yellow font-pixel font-bold text-sm md:text-lg mt-1">
                 {formatTime(getTotalTime(first))}
               </div>
-              <div className="text-gray-300 text-sm">{first.moveCount} moves</div>
+              <div className="text-nes-light-gray text-xs pixel-text">{first.moveCount} MOVES</div>
             </div>
           )}
-          <div className="w-28 h-28 bg-gradient-to-t from-amber-500 to-yellow-400 rounded-t-lg flex items-center justify-center shadow-xl">
-            <span className="text-5xl">🥇</span>
+          <div className="w-24 md:w-28 h-24 md:h-28 flex items-center justify-center border-4" style={{ backgroundColor: 'var(--nes-yellow)', borderColor: 'var(--nes-white)', borderWidth: '4px', boxShadow: '0 6px 0 var(--nes-black)', imageRendering: 'pixelated' }}>
+            <span className="text-4xl md:text-5xl" style={{ imageRendering: 'pixelated' }}>🥇</span>
           </div>
-          <div className="text-amber-400 font-black text-xl mt-1">1st</div>
+          <div className="text-nes-yellow pixel-text text-sm md:text-xl font-black mt-1">1ST</div>
         </div>
 
         {/* 3rd Place */}
         <div className="flex flex-col items-center">
           {third && (
             <div
-              className="mb-2 p-4 rounded-xl text-center transition-all hover:scale-105"
-              style={{ backgroundColor: third.model.color + '30' }}
+              className="mb-2 p-4 text-center border-3"
+              style={{ 
+                backgroundColor: third.model.color + '30',
+                borderColor: third.model.color,
+                borderWidth: '3px',
+                boxShadow: '0 3px 0 var(--nes-black)',
+                imageRendering: 'pixelated',
+              }}
             >
-              <div className="text-4xl mb-2">{third.model.emoji}</div>
-              <div className="text-white font-bold text-sm">{third.model.name}</div>
-              <div className="text-gray-300 text-xs mt-1">
+              <div className="mb-2">
+                <ModelIcon model={third.model} size="xl" />
+              </div>
+              <div className="text-nes-white pixel-text text-xs md:text-sm font-bold">{third.model.name.toUpperCase()}</div>
+              <div className="text-nes-light-gray font-pixel text-xs mt-1">
                 {formatTime(getTotalTime(third))}
               </div>
-              <div className="text-gray-400 text-xs">{third.moveCount} moves</div>
+              <div className="text-nes-light-gray text-[10px] pixel-text">{third.moveCount} MOVES</div>
             </div>
           )}
-          <div className="w-24 h-16 bg-gradient-to-t from-amber-700 to-amber-600 rounded-t-lg flex items-center justify-center shadow-lg">
-            <span className="text-4xl">🥉</span>
+          <div className="w-20 md:w-24 h-12 md:h-16 flex items-center justify-center border-3" style={{ backgroundColor: 'var(--nes-brown)', borderColor: 'var(--nes-white)', borderWidth: '3px', boxShadow: '0 3px 0 var(--nes-black)', imageRendering: 'pixelated' }}>
+            <span className="text-3xl md:text-4xl" style={{ imageRendering: 'pixelated' }}>🥉</span>
           </div>
-          <div className="text-amber-600 font-bold mt-1">3rd</div>
+          <div className="text-nes-brown pixel-text text-xs md:text-sm font-bold mt-1">3RD</div>
         </div>
       </div>
 
       {/* Full Rankings */}
-      <div className="border-t border-slate-600/50 pt-6">
-        <h3 className="text-lg font-semibold text-white mb-4 text-center">📊 Full Rankings</h3>
+      <div className="border-t-3 border-nes-gray pt-6" style={{ borderTopWidth: '3px' }}>
+        <h3 className="text-xs md:text-sm pixel-text text-nes-white mb-4 text-center">📊 FULL RANKINGS</h3>
         <div className="space-y-2">
           {finishOrder.map((modelId, index) => {
             const racer = racers.find((r) => r.model.id === modelId);
@@ -118,23 +140,27 @@ export function Podium({ racers, finishOrder }: Props) {
             return (
               <div
                 key={modelId}
-                className={`flex items-center justify-between p-3 rounded-lg transition-all hover:scale-[1.02] ${
-                  index === 0 
-                    ? 'bg-amber-500/20 border border-amber-500/30' 
-                    : 'bg-slate-700/30'
-                }`}
+                className="flex items-center justify-between p-3 border-3"
+                style={{
+                  backgroundColor: index === 0 ? 'var(--nes-yellow)' + '30' : 'var(--nes-dark-gray)',
+                  borderColor: index === 0 ? 'var(--nes-yellow)' : 'var(--nes-gray)',
+                  borderWidth: '3px',
+                  boxShadow: '0 2px 0 var(--nes-black)',
+                  imageRendering: 'pixelated',
+                }}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xl w-8">{medal}</span>
-                  <span className="text-2xl">{racer.model.emoji}</span>
-                  <span className="text-white font-medium">{racer.model.name}</span>
+                  <span className="text-base md:text-xl w-6 md:w-8" style={{ imageRendering: 'pixelated' }}>{medal}</span>
+                  <ModelIcon model={racer.model} size="lg" />
+                  <span className="text-nes-white pixel-text text-xs md:text-sm font-medium">{racer.model.name.toUpperCase()}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-400 text-sm">{racer.moveCount} moves</span>
+                  <span className="text-nes-light-gray text-[10px] md:text-xs pixel-text">{racer.moveCount} MOVES</span>
                   <span 
-                    className={`font-mono font-bold ${
-                      index === 0 ? 'text-amber-400 text-lg' : 'text-gray-300'
-                    }`}
+                    className="font-pixel font-bold text-xs md:text-sm"
+                    style={{
+                      color: index === 0 ? 'var(--nes-yellow)' : 'var(--nes-light-gray)',
+                    }}
                   >
                     {formatTime(totalTime)}
                   </span>
@@ -149,14 +175,23 @@ export function Podium({ racers, finishOrder }: Props) {
             .map((racer) => (
               <div
                 key={racer.model.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-red-900/20 border border-red-500/30"
+                className="flex items-center justify-between p-3 border-3"
+                style={{
+                  backgroundColor: 'var(--nes-red)' + '20',
+                  borderColor: 'var(--nes-red)',
+                  borderWidth: '3px',
+                  boxShadow: '0 2px 0 var(--nes-black)',
+                  imageRendering: 'pixelated',
+                }}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xl w-8">❌</span>
-                  <span className="text-2xl opacity-50">{racer.model.emoji}</span>
-                  <span className="text-gray-400 font-medium">{racer.model.name}</span>
+                  <span className="text-base md:text-xl w-6 md:w-8">❌</span>
+                  <div className="opacity-50">
+                    <ModelIcon model={racer.model} size="lg" />
+                  </div>
+                  <span className="text-nes-light-gray pixel-text text-xs md:text-sm font-medium">{racer.model.name.toUpperCase()}</span>
                 </div>
-                <span className="text-red-400 text-sm">DNF - {racer.error}</span>
+                <span className="text-nes-red text-[10px] md:text-xs pixel-text">DNF - {racer.error?.toUpperCase()}</span>
               </div>
             ))}
         </div>
@@ -164,10 +199,10 @@ export function Podium({ racers, finishOrder }: Props) {
 
       {/* Stats */}
       {first && (
-        <div className="mt-6 text-center text-gray-400 text-sm">
+        <div className="mt-6 text-center text-nes-light-gray text-xs md:text-sm pixel-text">
           <p>
-            🏆 Winner: <span className="text-white font-semibold">{first.model.name}</span> with{' '}
-            <span className="text-amber-400 font-mono">{formatTime(getTotalTime(first))}</span>
+            🏆 WINNER: <span className="text-nes-white font-semibold">{first.model.name.toUpperCase()}</span> WITH{' '}
+            <span className="text-nes-yellow font-pixel">{formatTime(getTotalTime(first))}</span>
           </p>
         </div>
       )}
