@@ -98,7 +98,7 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
                     </span>
                   )}
                   <span
-                    className="text-[10px] md:text-xs px-2 py-1 pixel-text border-2 border-nes-white"
+                    className="text-[10px] md:text-xs px-2 py-1 pixel-text border-2"
                     style={{
                       backgroundColor: isReady
                         ? 'var(--nes-yellow)'
@@ -109,8 +109,9 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
                             : hasError
                               ? 'var(--nes-red)'
                               : 'var(--nes-gray)',
-                      color: 'var(--nes-white)',
-                      boxShadow: '2px 2px 0 var(--nes-black)',
+                      color: isReady ? '#000000' : '#ffffff',
+                      borderColor: '#000000',
+                      boxShadow: '2px 2px 0 rgba(0, 0, 0, 0.2)',
                       imageRendering: 'pixelated',
                     }}
                   >
@@ -169,8 +170,8 @@ export function RaceTrack({ maze, racers, finishOrder }: Props) {
                   ⏱️ {isReady ? '--' : formatTime(elapsedTime)}
                 </div>
                 <div className="text-xs text-nes-light-gray pixel-text">
-                  {isReady && `${racer.plannedPath.length - 1} STEPS TO GO`}
-                  {isRacing && `MOVE ${racer.moveCount}/${racer.plannedPath.length - 1}`}
+                  {isReady && `${Math.max(0, racer.plannedPath.length > 0 ? racer.plannedPath.length - 1 : 0)} STEPS TO GO`}
+                  {isRacing && `MOVE ${racer.moveCount}/${Math.max(0, racer.plannedPath.length > 0 ? racer.plannedPath.length - 1 : 0)}`}
                   {isFinished && `${racer.moveCount} MOVES`}
                 </div>
               </div>
