@@ -82,7 +82,7 @@ export function AISelector({
       </div>
 
       {selectedModels.length < 2 && (
-        <p className="text-nes-yellow text-xs md:text-sm text-center font-normal">
+        <p className="text-[#000000] text-xs md:text-sm text-center font-normal">
           ⚠️ Select at least 2 AI models for the race
         </p>
       )}
