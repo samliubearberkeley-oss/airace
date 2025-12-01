@@ -421,6 +421,16 @@ function App() {
             >
               InsForge
             </a>
+            {' • '}
+            Made by{' '}
+            <a 
+              href="https://x.com/real_SamLiu" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#000000] font-semibold hover:underline"
+            >
+              Sam Liu
+            </a>
           </p>
           <p className="mt-2 text-xs text-[#666666]">
             Grok 4 • Gemini 2.5 Pro • Claude Sonnet 4.5 • GPT-5 • GPT-4o
