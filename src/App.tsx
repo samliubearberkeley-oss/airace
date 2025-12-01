@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { AISelector } from './components/AISelector';
 import { MazeSettings } from './components/MazeSettings';
 import { RaceTrack } from './components/RaceTrack';
@@ -6,10 +6,16 @@ import { Podium } from './components/Podium';
 import { generateMaze, type Maze } from './lib/maze';
 import { type AIModel } from './lib/insforge';
 import { planPath, animateRacer, type RacerState } from './lib/aiRacer';
+import { trackVisit } from './lib/analytics';
 
 type GameState = 'setup' | 'ready' | 'racing' | 'finished';
 
 function App() {
+  // Track page visit on mount
+  useEffect(() => {
+    trackVisit();
+  }, []);
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('setup');
   const [maze, setMaze] = useState<Maze | null>(null);
